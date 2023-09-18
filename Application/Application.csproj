@@ -26,8 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions\" />
-    <Folder Include="Features\" />
     <Folder Include="MappingProfiles\" />
     <Folder Include="Models\" />
     <Folder Include="Services\" />
