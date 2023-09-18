@@ -265,8 +265,7 @@ namespace WebFramework.Configuration
                 #endregion
 
                 //If use FluentValidation then must be use this package to show validation in swagger (MicroElements.Swashbuckle.FluentValidation)
-                //options.AddFluentValidationRules();
-
+                //options.AddFluentValidationRules(); 
             });
         }
 
