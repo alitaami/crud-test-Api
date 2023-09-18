@@ -19,10 +19,6 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-  <ItemGroup>
-    <Folder Include="Context\" />
-    <Folder Include="Repositories\" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
