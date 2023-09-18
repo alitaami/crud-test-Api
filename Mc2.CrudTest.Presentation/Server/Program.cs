@@ -1,3 +1,4 @@
+using Insfrastructure;
 using Microsoft.AspNetCore.ResponseCompression;
 
 namespace Mc2.CrudTest.Presentation
@@ -9,7 +10,7 @@ namespace Mc2.CrudTest.Presentation
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
