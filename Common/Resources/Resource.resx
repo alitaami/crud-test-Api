@@ -258,6 +258,9 @@
   <data name="UserRoleExist" xml:space="preserve">
     <value>این نقش قبلا به این کاربر نسبت داده شده است</value>
   </data>
+  <data name="ValidationException" xml:space="preserve">
+    <value>از پر بودن و صحت فیلد های پر شده مطمئن باشید</value>
+  </data>
   <data name="WrongAdvertise" xml:space="preserve">
     <value>چنین آگهی ای برای این شخص تعریف نشده است</value>
   </data>

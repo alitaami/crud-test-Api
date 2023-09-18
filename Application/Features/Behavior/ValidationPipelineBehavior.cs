@@ -37,7 +37,7 @@ namespace Application.Features.Behavior
                     {
                         errors.Add(failure.ErrorMessage);
                     }
-                    throw new CustomValidationException(errors, failures.Select(x => x.ErrorMessage).ToString());
+                    throw new CustomValidationException(errors, "one or more validation failure(s) occured ");
                 }
             }
             return await next();

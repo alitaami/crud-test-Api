@@ -484,6 +484,15 @@ namespace Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to از پر بودن و صحت فیلد های پر شده مطمئن باشید.
+        /// </summary>
+        public static string ValidationException {
+            get {
+                return ResourceManager.GetString("ValidationException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to چنین آگهی ای برای این شخص تعریف نشده است.
         /// </summary>
         public static string WrongAdvertise {

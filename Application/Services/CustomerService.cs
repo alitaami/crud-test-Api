@@ -185,7 +185,7 @@ namespace Application.Services
                 var emailCheck = _repo.TableNoTracking
                     .Any(x => x.Email == email);
                
-                if (conflict.Equals(true) || emailCheck.Equals(true))
+                if (conflict || emailCheck)
                     conflictRes = true;
 
                 return Ok(conflictRes);

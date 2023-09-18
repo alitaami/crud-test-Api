@@ -11,6 +11,7 @@ using Application.Models.Dtos;
 using Application.Features.Properties.Commands;
 using Application.Models.ViewModels;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Application.Exceptions;
 
 namespace Mc2.CrudTest.Presentation.Server.Controllers
 {
@@ -98,6 +99,10 @@ namespace Mc2.CrudTest.Presentation.Server.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, null, null);
+
+                if (ex is CustomValidationException)
+                    return InternalServerError(ErrorCodeEnum.InternalError, Resource.ValidationException);
+
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain);
             }
         }
@@ -124,6 +129,10 @@ namespace Mc2.CrudTest.Presentation.Server.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, null, null);
+
+                if (ex is CustomValidationException)
+                    return InternalServerError(ErrorCodeEnum.InternalError, Resource.ValidationException);
+
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain);
             }
         }
