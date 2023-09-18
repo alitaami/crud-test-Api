@@ -1,4 +1,6 @@
 ﻿using Application.Features.Behavior.Contracts;
+using Application.Models;
+using Application.Models.ViewModels;
 using Application.Repository;
 using Application.Services.Interfaces;
 using Common.Resources;
@@ -11,39 +13,34 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Features.Properties.Commands
 {
-    public class DeleteCustomerRequest : IRequest<ServiceResult>
+    public class UpdateCustomerRequest : IRequest<ServiceResult>
     {
-        public int PropertyId { get; set; }
-
-        public DeleteCustomerRequest(int propertyId)
+        public CustomerUpdateViewModel customerUpdate { get; set; }
+        public UpdateCustomerRequest(CustomerUpdateViewModel update)
         {
-            PropertyId = propertyId;
+            customerUpdate = update;
+
         }
     }
-
-    public class DeletePropertyRequestHandler : ServiceBase<DeletePropertyRequestHandler>, IRequestHandler<DeleteCustomerRequest, ServiceResult>
+    public class UpdatePropertyHandler : ServiceBase<UpdatePropertyHandler>, IRequestHandler<UpdateCustomerRequest, ServiceResult>
     {
         private readonly ICustomerService _customer;
-        public DeletePropertyRequestHandler(ILogger<DeletePropertyRequestHandler> logger, ICustomerService customer)
-       : base(logger)
+        public UpdatePropertyHandler(ILogger<UpdatePropertyHandler> logger, ICustomerService customer)
+           : base(logger)
         {
             _customer = customer;
         }
 
-        public async Task<ServiceResult> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken)
+        public async Task<ServiceResult> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var res = await _customer.DeleteCustomerById(request.PropertyId, cancellationToken);
-
-                if (!res.Result.HttpStatusCode.Equals((int)(HttpStatusCode.OK)))
-                    return BadRequest(ErrorCodeEnum.GeneralErrorTryAgain, Resource.GeneralErrorTryAgain, null);
+                var res = await _customer.UpdateCustomer(request.customerUpdate, cancellationToken);
 
                 return Ok();
             }
