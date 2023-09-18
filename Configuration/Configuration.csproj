@@ -1,9 +1,32 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.OpenApi" Version="1.6.8" />
+		<PackageReference Include="NLog" Version="5.2.4" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.3.4" />
+		<PackageReference Include="NLog.Web.AspNetCore" Version="5.3.4" />
+		<PackageReference Include="Quick.AspNetCore.Components.Web.Extensions" Version="6.0.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.4" />
+
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="ApiBase\" />
+		<Folder Include="Configuration\" />
+		<Folder Include="Middlewares\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Insfrastructure\Insfrastructure.csproj" />
+	</ItemGroup>
 
 </Project>
