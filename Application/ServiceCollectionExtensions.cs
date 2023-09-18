@@ -1,4 +1,4 @@
-﻿using Application.Features.Behaviors;
+﻿using Application.Features.Behavior;
 using Application.Services;
 using Application.Services.Interfaces;
 using FluentValidation;

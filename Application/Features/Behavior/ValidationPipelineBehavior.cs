@@ -1,9 +1,9 @@
 ﻿using Application.Exceptions;
-using Application.Features.Behaviors.Contracts;
+using Application.Features.Behavior.Contracts;
 using FluentValidation;
 using MediatR;
 
-namespace Application.Features.Behaviors
+namespace Application.Features.Behavior
 {
     public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>, IValidatable
@@ -37,7 +37,7 @@ namespace Application.Features.Behaviors
                     {
                         errors.Add(failure.ErrorMessage);
                     }
-                    throw new CustomValidationException(errors, failures.Select(x=>x.ErrorMessage).ToString());
+                    throw new CustomValidationException(errors, failures.Select(x => x.ErrorMessage).ToString());
                 }
             }
             return await next();
