@@ -78,7 +78,7 @@ namespace Application.Services
 
                 var check = await CheckConflicts(model.Firstname, model.Lastname, model.DateOfBirth, model.Email, cancellationToken);
 
-                if(!check.Result.Equals(true))
+                if (check.Data.Equals(true))
                     return BadRequest(ErrorCodeEnum.BadRequest, Resource.ConflictError, null);///
 
                 var res = _repo.AddAsync(customer, cancellationToken);
@@ -132,11 +132,11 @@ namespace Application.Services
                 if (customer == null)
                     return NotFound(ErrorCodeEnum.NotFound, Resource.NotFound, null);///
 
-                var check = await CheckConflicts(model.Firstname, model.Lastname, model.DateOfBirth,model.Email,cancellationToken);
+                var check = await CheckConflicts(model.Firstname, model.Lastname, model.DateOfBirth, model.Email, cancellationToken);
 
-                if (!check.Result.Equals(true)) 
-                        return BadRequest(ErrorCodeEnum.BadRequest, Resource.ConflictError, null);///
-                 
+                if (check.Data.Equals(true))
+                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.ConflictError, null);///
+
                 // TODO : check unique fields and conditions  
                 customer.BankAccountNumber = model.BankAccountNumber;
                 customer.DateOfBirth = model.DateOfBirth;
@@ -169,21 +169,20 @@ namespace Application.Services
         {
             try
             {
+                bool conflictRes = false;
+
                 var conflict = _repo.TableNoTracking
                 .Any(x => x.Firstname == firstName
                 && x.Lastname == lastName
                 && x.DateOfBirth == dateOfBirth);
-
-                if (conflict)
-                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.ConflictError, null);///
-
+                 
                 var emailCheck = _repo.TableNoTracking
                     .Any(x => x.Email == email);
+               
+                if (conflict.Equals(true) || emailCheck.Equals(true))
+                    conflictRes = true;
 
-                if (emailCheck)
-                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.EmailConflict, null);///
-
-                return Ok(true);
+                return Ok(conflictRes);
 
             }
             catch (Exception ex)
