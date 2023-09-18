@@ -213,6 +213,9 @@
   <data name="PhoneError" xml:space="preserve">
     <value>تلفن همراه در فرمت درستی وارد نشده است</value>
   </data>
+  <data name="PhoneException" xml:space="preserve">
+    <value>The string supplied did not seem to be a phone number.</value>
+  </data>
   <data name="RecoveryPassword" xml:space="preserve">
     <value>بازیابی رمز عبور</value>
   </data>

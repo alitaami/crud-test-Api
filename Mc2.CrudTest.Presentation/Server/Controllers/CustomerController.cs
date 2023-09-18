@@ -42,9 +42,6 @@ namespace Mc2.CrudTest.Presentation.Server.Controllers
             {
                 var res = await _sender.Send(new GetCustomerByIdRequest(id));
 
-                if (res is null)
-                    return NotFound((ErrorCodeEnum.NotFound, Resource.NotFound));
-
                 return APIResponse(res);
             }
             catch (Exception ex)
@@ -69,9 +66,6 @@ namespace Mc2.CrudTest.Presentation.Server.Controllers
             try
             {
                 var res = await _sender.Send(new GetAllCustomersRequest());
-
-                if (res is null)
-                    return NotFound((ErrorCodeEnum.NotFound, Resource.NotFound));
 
                 return APIResponse(res);
             }
@@ -99,9 +93,6 @@ namespace Mc2.CrudTest.Presentation.Server.Controllers
             {
                 var res = await _sender.Send(new CreateCustomerRequest(model));
 
-                if (!res.Result.HttpStatusCode.Equals((int)HttpStatusCode.OK))
-                    return BadRequest((ErrorCodeEnum.BadRequest, Resource.GeneralErrorTryAgain));
-
                 return APIResponse(res);
             }
             catch (Exception ex)
@@ -128,9 +119,6 @@ namespace Mc2.CrudTest.Presentation.Server.Controllers
             {
                 var res = await _sender.Send(new UpdateCustomerRequest(model));
 
-                if (!res.Result.HttpStatusCode.Equals((int)HttpStatusCode.OK))
-                    return BadRequest((ErrorCodeEnum.BadRequest, Resource.GeneralErrorTryAgain));
-
                 return APIResponse(res);
             }
             catch (Exception ex)
@@ -156,9 +144,6 @@ namespace Mc2.CrudTest.Presentation.Server.Controllers
             try
             {
                 var res = await _sender.Send(new DeleteCustomerRequest(id));
-
-                if (!res.Result.HttpStatusCode.Equals((int)HttpStatusCode.OK))
-                    return BadRequest((ErrorCodeEnum.BadRequest, Resource.GeneralErrorTryAgain));
 
                 return APIResponse(res);
             }

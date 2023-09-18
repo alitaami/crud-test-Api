@@ -38,10 +38,7 @@ namespace Application.Features.Properties.Queries
         {
             try
             {
-                var res = await _customer.GetCustomers();
-
-                if (res is null)
-                    return NotFound(ErrorCodeEnum.NotFound, Resource.NotFound, null);
+                var res = await _customer.GetCustomers(); 
 
                 return Ok(res);
             }

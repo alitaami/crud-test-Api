@@ -40,10 +40,7 @@ namespace Application.Features.Properties.Queries
             try
             {
                 var res = await _customer.GetCustomerById(request.PropertyId, cancellationToken);
-
-                if (res is null)
-                    return NotFound(ErrorCodeEnum.NotFound, Resource.NotFound, null);
-
+ 
                 return Ok(res);
             }
             catch (Exception ex)

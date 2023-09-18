@@ -42,7 +42,7 @@ namespace Application.Features.Properties.Commands
             {
                 var res = await _customer.UpdateCustomer(request.customerUpdate, cancellationToken);
 
-                return Ok();
+                return Ok(res);
             }
             catch (Exception ex)
             {

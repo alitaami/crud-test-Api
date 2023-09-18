@@ -92,6 +92,9 @@ namespace Application.Services
             {
                 _logger.LogError(ex, null, null);
 
+                if(ex.Message.Equals(Resource.PhoneException))
+                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.PhoneError, null);///
+
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
             }
         }
@@ -123,10 +126,8 @@ namespace Application.Services
         {
             try
             {
-                ValidateModel(model);
-
-                bool checkPhoneNumber = PhoneNumberValidation.IsValidMobilePhoneNumber(model.PhoneNumber, model.CountryCode);
-
+                ValidateModel(model); 
+               
                 var customer = _repo.GetByIdAsync(cancellationToken, model.Id).Result;
 
                 if (customer == null)
@@ -136,6 +137,8 @@ namespace Application.Services
 
                 if (check.Data.Equals(true))
                     return BadRequest(ErrorCodeEnum.BadRequest, Resource.ConflictError, null);///
+
+                bool checkPhoneNumber = PhoneNumberValidation.IsValidMobilePhoneNumber(model.PhoneNumber, model.CountryCode);
 
                 // TODO : check unique fields and conditions  
                 customer.BankAccountNumber = model.BankAccountNumber;
@@ -160,6 +163,9 @@ namespace Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, null, null);
+
+                if (ex.Message.Equals(Resource.PhoneException))
+                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.PhoneError, null);///
 
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
             }

@@ -349,6 +349,15 @@ namespace Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The string supplied did not seem to be a phone number..
+        /// </summary>
+        public static string PhoneException {
+            get {
+                return ResourceManager.GetString("PhoneException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to بازیابی رمز عبور.
         /// </summary>
         public static string RecoveryPassword {

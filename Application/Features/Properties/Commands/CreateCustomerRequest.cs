@@ -43,7 +43,7 @@ namespace Application.Features.Properties.Commands
             {
                 var res = await _customer.AddCustomer(request.CustomerRequest, cancellationToken);
                  
-                return res;
+                return Ok(res);
             }
             catch (Exception ex)
             {

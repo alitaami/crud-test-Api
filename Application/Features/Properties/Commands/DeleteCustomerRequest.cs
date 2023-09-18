@@ -41,11 +41,8 @@ namespace Application.Features.Properties.Commands
             try
             {
                 var res = await _customer.DeleteCustomerById(request.PropertyId, cancellationToken);
-
-                if (!res.Result.HttpStatusCode.Equals((int)(HttpStatusCode.OK)))
-                    return BadRequest(ErrorCodeEnum.GeneralErrorTryAgain, Resource.GeneralErrorTryAgain, null);
-
-                return Ok();
+ 
+                return Ok(res);
             }
             catch (Exception ex)
             {
