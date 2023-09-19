@@ -3,7 +3,8 @@ but unfortunately I didnt implement the Test section beacause I am little famili
 I am eager to start taking Testing courses and learn it as soon as it possible too and build testable projects.
 -------
 
-First you should add-migration and update-database to create a Db in your local SqlServer, then it will seed some data to tables by fluent api.
+First you should add-migration and update-database to create a Db in your local SqlServer, 
+then it will seed some data to Customer table by fluent api.
 
 -------
 ** You can test CRUD methods with swagger **
