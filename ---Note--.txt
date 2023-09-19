@@ -1,4 +1,6 @@
-Hello I have finished the task. I followed most of the conditions and rules that you told me, but unfortunately I didnt implement the Test section beacause I am little familiar with Testing. I am eager to start taking Testing courses and learn it as soon as it possible too and build testable projects.
+Hello I have finished the task. I followed most of the conditions and rules that you told me,
+but unfortunately I didnt implement the Test section beacause I am little familiar with Testing.
+I am eager to start taking Testing courses and learn it as soon as it possible too and build testable projects.
 -------
 
 First you should add-migration and update-database to create a Db in your local SqlServer, then it will seed some data to tables by fluent api.
