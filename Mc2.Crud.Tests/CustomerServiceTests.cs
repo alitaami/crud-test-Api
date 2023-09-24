@@ -30,10 +30,9 @@ namespace Mc2.Crud.Tests
             _service = new CustomerService(_logger, _repo, _mapper);
         }
         #region GetById
-        [Test]
-        public async Task GetCustomerById_WithValidId_ReturnsCustomerDto()
+        [TestCase(1)]
+        public async Task GetCustomerById_WithValidId_ReturnsCustomerDto(int Id)
         {
-            int Id = 1;
             CancellationToken cancellationToken = CancellationToken.None;
 
             // Set up a mock customer object that you expect to be returned by the repository
@@ -77,10 +76,9 @@ namespace Mc2.Crud.Tests
             Assert.That(result.Data, Is.EqualTo(mockCustomerDto));
         }
 
-        [Test]
-        public async Task GetCustomerById_WithInValidId_ReturnsNotFound()
+        [TestCase(0)]
+        public async Task GetCustomerById_WithInValidId_ReturnsNotFound(/*Invalid Id*/ int Id)
         {
-            int Id = 0; // Invalid ID
             CancellationToken cancellationToken = CancellationToken.None;
 
             // Act
@@ -92,10 +90,9 @@ namespace Mc2.Crud.Tests
             Assert.That(result.Data, Is.Null);
         }
 
-        [Test]
-        public async Task GetCustomerById_WithException_ReturnsInternalServerError()
+        [TestCase(1)]
+        public async Task GetCustomerById_WithException_ReturnsInternalServerError(int id)
         {
-            int id = 1;
             CancellationToken cancellationToken = CancellationToken.None;
 
             Mock.Get(_repo)
@@ -113,7 +110,85 @@ namespace Mc2.Crud.Tests
         #endregion
 
         #region GetAll
+        [Test]
+        public async Task GetCustomers_ReturnsListOfCustomerDto()
+        {
+            var mockCustomers = new List<Customer>
+         {
+        new Customer
+        {
+                Id = 1,
+                Firstname = "ali",
+                Lastname = "taami",
+                DateOfBirth = new DateTime(2023, 9, 18, 12, 20, 8, 813),
+                PhoneNumber = "9301327634",
+                Email = "alitaami@gmail.com",
+                BankAccountNumber = "5859831001081461"
+        },
+        new Customer
+        {
+             Id = 2,
+                 Firstname = "Ata",
+                 Lastname = "Taami",
+                 DateOfBirth = new DateTime(2012, 10, 11),
+                 PhoneNumber = "9301327624", // Valid phone number
+                 Email = "atataami91@gmail.com", // Valid email
+                 BankAccountNumber = "5859831001081462" // Valid 16-digit bank account number
+        }
+            };
 
+            var mockCustomersDto = mockCustomers.Select(x => new CustomerDto
+            {
+                Firstname = x.Firstname,
+                Lastname = x.Lastname,
+                DateOfBirth = x.DateOfBirth,
+                PhoneNumber = x.PhoneNumber,
+                Email = x.Email,
+                BankAccountNumber = x.BankAccountNumber
+            }).ToList();
+
+            Mock.Get(_repo)
+                .Setup(repo => repo.TableNoTracking)
+                .Returns(mockCustomers.AsQueryable());
+
+            Mock.Get(_mapper)
+                .Setup(mapper => mapper.Map<List<CustomerDto>>(mockCustomers))
+                .Returns(mockCustomersDto);
+
+            var result = await _service.GetCustomers();
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Data, Is.Not.Null);
+        }
+
+        [Test]
+        public async Task GetCustomers_ReturnsNotFound()
+        {
+            Mock.Get(_repo)
+                .Setup(repo => repo.TableNoTracking)
+                .Returns(Enumerable.Empty<Customer>().AsQueryable());
+
+            var result = await _service.GetCustomers();
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Data, Is.Null);
+        }
+
+        [Test]
+        public async Task GetCustomers_ReturnsInternalServerError()
+        {
+            Mock.Get(_repo)
+                .Setup(repo => repo.TableNoTracking)
+                .Throws(new Exception());
+
+            //Act
+            var result = await _service.GetCustomers();
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+        }
         #endregion
     }
 }
