@@ -4,6 +4,7 @@ using Application.Repository;
 using Application.Services;
 using AutoMapper;
 using Castle.Core.Resource;
+using Common.Resources;
 using Domain.ApiResult;
 using Domain.Entities;
 using EstateAgentApi.Services.Base;
@@ -32,8 +33,10 @@ namespace Mc2.Crud.Tests
         }
         #region GetById
         [TestCase(1)]
-        public async Task GetCustomerById_WithValidId_ReturnsCustomerDto(int Id)
+        public async Task GetById_ValidId_ReturnsCustomerDto(int Id)
         {
+            //Arrange
+
             CancellationToken cancellationToken = CancellationToken.None;
 
             // Set up a mock customer object that you expect to be returned by the repository
@@ -80,9 +83,14 @@ namespace Mc2.Crud.Tests
         }
 
         [TestCase(0)]
-        public async Task GetCustomerById_WithInValidId_ReturnsNotFound(/*Invalid Id*/ int Id)
+        public async Task GetById_InvalidId_ReturnsNotFound(/*Invalid Id*/ int Id)
         {
+            //Arrange
             CancellationToken cancellationToken = CancellationToken.None;
+
+            Mock.Get(_repo)
+                .Setup(repo => repo.GetByIdAsync(cancellationToken, Id))
+                .ReturnsAsync((Customer)null);
 
             // Act
             var result = await _service.GetCustomerById(Id, cancellationToken);
@@ -94,7 +102,7 @@ namespace Mc2.Crud.Tests
         }
 
         [TestCase(1)]
-        public async Task GetCustomerById_WithException_ReturnsInternalServerError(int id)
+        public async Task GetById_ExceptionThrown_ReturnsInternalServerError(int id)
         {
             CancellationToken cancellationToken = CancellationToken.None;
 
@@ -117,6 +125,7 @@ namespace Mc2.Crud.Tests
         [Test]
         public async Task GetCustomers_ReturnsListOfCustomerDto()
         {
+            //Arrange
             var mockCustomers = new List<Customer>
          {
         new Customer
@@ -159,6 +168,7 @@ namespace Mc2.Crud.Tests
                 .Setup(mapper => mapper.Map<List<CustomerDto>>(mockCustomers))
                 .Returns(mockCustomersDto);
 
+            //Act
             var result = await _service.GetCustomers();
 
             //Assert
@@ -170,12 +180,14 @@ namespace Mc2.Crud.Tests
         }
 
         [Test]
-        public async Task GetCustomers_ReturnsNotFound()
+        public async Task GetCustomers_NoCustomers_ReturnsNotFound()
         {
+            //Arrange
             Mock.Get(_repo)
                 .Setup(repo => repo.TableNoTracking)
                 .Returns(Enumerable.Empty<Customer>().AsQueryable());
 
+            //Act
             var result = await _service.GetCustomers();
 
             //Assert
@@ -185,8 +197,9 @@ namespace Mc2.Crud.Tests
         }
 
         [Test]
-        public async Task GetCustomers_ReturnsInternalServerError()
+        public async Task GetCustomers_ExceptionThrown_ReturnsInternalServerError()
         {
+            //Arrange
             Mock.Get(_repo)
                 .Setup(repo => repo.TableNoTracking)
                 .Throws(new Exception());
@@ -203,7 +216,7 @@ namespace Mc2.Crud.Tests
 
         #region DeleteById
         [TestCase(1)]
-        public async Task DeleteCustomerById_WithValidId_Successful(int Id)
+        public async Task DeleteCustomer_ValidId_Successful(int Id)
         {
             CancellationToken cancellationToken = CancellationToken.None;
 
@@ -223,7 +236,7 @@ namespace Mc2.Crud.Tests
         }
 
         [TestCase(0)]
-        public async Task DeleteCustomerById_WithInValidId_NotSuccessful(int Id)
+        public async Task DeleteCustomer_InvalidId_ReturnsNotFound(int Id)
         {
             CancellationToken cancellationToken = CancellationToken.None;
 
@@ -243,7 +256,7 @@ namespace Mc2.Crud.Tests
         }
 
         [TestCase(0)]
-        public async Task DeleteCustomerById_WithInValidId_InternalServerError(int Id)
+        public async Task DeleteCustomer_ExceptionThrown_ReturnsInternalServerError(int Id)
         {
             CancellationToken cancellationToken = CancellationToken.None;
 
@@ -258,16 +271,16 @@ namespace Mc2.Crud.Tests
             //Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
             Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.InternalError));
-
         }
 
         #endregion
 
         #region Create
         [Test]
-        public async Task AddCustomer_WithValidInput_Successful()
+        public async Task AddCustomer_ValidInput_Successful()
         {
             CancellationToken cancellationToken = CancellationToken.None;
+          
             // Arrange
             var model = new CustomerViewModel
             {
@@ -291,13 +304,130 @@ namespace Mc2.Crud.Tests
             };
 
             Mock.Get(_repo)
-                .Setup(repo => repo.AddAsync(customer, cancellationToken,true))
-                .Returns(It.IsAny<Customer>);
+                .Setup(repo => repo.AddAsync(customer, cancellationToken, true))
+                .Returns(Task.CompletedTask); // Simulate a successful addition
+
             // Act
             var result = await _service.AddCustomer(model, CancellationToken.None);
 
             //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.None));
+
         }
+
+        [Test]
+        public async Task AddCustomer_InvalidPhoneNumber_ReturnsBadRequest()
+        {
+            CancellationToken cancellationToken = CancellationToken.None;
+         
+            // Arrange
+            var model = new CustomerViewModel
+            {
+                // Provide valid input data here
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081461"
+            };
+            Customer customer = new Customer
+            {
+                Firstname = model.Firstname,
+                Lastname = model.Lastname,
+                DateOfBirth = model.DateOfBirth,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                BankAccountNumber = model.BankAccountNumber
+            };
+
+            Mock.Get(_repo)
+                .Setup(repo => repo.AddAsync(customer, cancellationToken, true))
+                .Returns(Task.FromCanceled<int>(new CancellationToken(canceled: true))); // Simulate an UnSuccessful addition
+
+            // Act
+            var result = await _service.AddCustomer(model, CancellationToken.None);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.PhoneFormatError));
+        }
+
+        [Test]
+        public async Task AddCustomer_Conflict_ReturnsBadRequest()
+        {
+            CancellationToken cancellationToken = CancellationToken.None;
+
+            // Arrange
+            var model = new CustomerViewModel
+            {
+                // Provide valid input data here
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "9301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081461"
+            };
+
+            Customer customer = new Customer
+            {
+                Firstname = model.Firstname,
+                Lastname = model.Lastname,
+                DateOfBirth = model.DateOfBirth,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                BankAccountNumber = model.BankAccountNumber
+            };
+
+            // Mock the TableNoTracking  method of the repository to simulate a duplicate addition
+            Mock.Get(_repo)
+                .Setup(repo => repo.TableNoTracking)
+                .Returns(new[] { customer }.AsQueryable());
+
+            // Act
+            var result = await _service.AddCustomer(model, CancellationToken.None);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.UserAlreadyExists));
+        }
+
+        [Test]
+        public async Task AddCustomer_InternalError_ReturnsInternalServerError()
+        {
+            // Arrange
+            var cancellationToken = CancellationToken.None;
+
+            // Create a mock customer model
+            var model = new CustomerViewModel
+            {
+                // Provide valid input data here
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "9301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081461"
+            };
+
+            // Mock the AddAsync method of the repository to throw an exception
+            Mock.Get(_repo)
+                .Setup(repo => repo.AddAsync(It.IsAny<Customer>(), cancellationToken, true))
+                .Throws(new Exception("An error occurred during customer addition."));
+
+            // Act
+            var result = await _service.AddCustomer(model, cancellationToken);
+
+            // Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.InternalError));
+        }
+
         #endregion
     }
 }

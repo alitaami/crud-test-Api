@@ -26,12 +26,7 @@ namespace Application.Services
         public async Task<ServiceResult> GetCustomerById(int id, CancellationToken cancellationToken)
         {
             try
-            {
-                if (id <= 0)
-                {
-                    return NotFound(ErrorCodeEnum.NotFound, Resource.NotFound, null);
-                }
-
+            {  
                 var customer = await _repo.GetByIdAsync(cancellationToken, id);
 
                 if (customer == null)
@@ -84,7 +79,7 @@ namespace Application.Services
                 var check = await CheckConflicts(model.Firstname, model.Lastname, model.DateOfBirth, model.Email, cancellationToken);
 
                 if (check.Data.Equals(true))
-                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.ConflictError, null);///
+                    return BadRequest(ErrorCodeEnum.UserAlreadyExists, Resource.ConflictError, null);///
 
                 var res = _repo.AddAsync(customer, cancellationToken);
 
@@ -97,8 +92,8 @@ namespace Application.Services
             {
                 _logger.LogError(ex, null, null);
 
-                if (ex.Message.Equals(Resource.PhoneException))
-                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.PhoneError, null);///
+                //if (ex.Message.Equals(Resource.PhoneException))
+                //    return BadRequest(ErrorCodeEnum.BadRequest, Resource.PhoneError, null);///
 
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
             }
@@ -141,7 +136,7 @@ namespace Application.Services
                 var check = await CheckConflicts(model.Firstname, model.Lastname, model.DateOfBirth, model.Email, cancellationToken);
 
                 if (check.Data.Equals(true))
-                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.ConflictError, null);///
+                    return BadRequest(ErrorCodeEnum.UserAlreadyExists, Resource.ConflictError, null);///
 
                 bool checkPhoneNumber = (bool)CheckPhone(model.PhoneNumber, model.CountryCode).Result.Data;
 
@@ -169,8 +164,8 @@ namespace Application.Services
             {
                 _logger.LogError(ex, null, null);
 
-                if (ex.Message.Equals(Resource.PhoneException))
-                    return BadRequest(ErrorCodeEnum.BadRequest, Resource.PhoneError, null);///
+                //if (ex.Message.Equals(Resource.PhoneException))
+                //    return BadRequest(ErrorCodeEnum.BadRequest, Resource.PhoneError, null);///
 
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
             }
