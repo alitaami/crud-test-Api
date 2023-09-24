@@ -1,4 +1,5 @@
 using Application.Models.Dtos;
+using Application.Models.ViewModels;
 using Application.Repository;
 using Application.Services;
 using AutoMapper;
@@ -179,7 +180,7 @@ namespace Mc2.Crud.Tests
 
             //Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
-            Assert.That(result.Data, Is.Null);  
+            Assert.That(result.Data, Is.Null);
 
         }
 
@@ -238,7 +239,7 @@ namespace Mc2.Crud.Tests
             Assert.That(result, Is.InstanceOf<ServiceResult>());
             Assert.That(result.Data, Is.Null);
             Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.NotFound));
-         
+
         }
 
         [TestCase(0)]
@@ -262,6 +263,41 @@ namespace Mc2.Crud.Tests
 
         #endregion
 
+        #region Create
+        [Test]
+        public async Task AddCustomer_WithValidInput_Successful()
+        {
+            CancellationToken cancellationToken = CancellationToken.None;
+            // Arrange
+            var model = new CustomerViewModel
+            {
+                // Provide valid input data here
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "9301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081461"
+            };
+            Customer customer = new Customer
+            {
+                Firstname = model.Firstname,
+                Lastname = model.Lastname,
+                DateOfBirth = model.DateOfBirth,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                BankAccountNumber = model.BankAccountNumber
+            };
 
+            Mock.Get(_repo)
+                .Setup(repo => repo.AddAsync(customer, cancellationToken,true))
+                .Returns(It.IsAny<Customer>);
+            // Act
+            var result = await _service.AddCustomer(model, CancellationToken.None);
+
+            //Assert
+        }
+        #endregion
     }
 }

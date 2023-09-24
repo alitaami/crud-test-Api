@@ -18,6 +18,7 @@ namespace Application.Services.Interfaces
         public Task<ServiceResult> AddCustomer(CustomerViewModel model, CancellationToken cancellationToken);
         public Task<ServiceResult> UpdateCustomer( CustomerUpdateViewModel model, CancellationToken cancellationToken);
         public Task<ServiceResult> CheckConflicts( string firstName,string lastName,DateTime dateOfBirth,string email, CancellationToken cancellationToken);
+        public Task<ServiceResult> CheckPhone(string phoneNumber, string countryCode);
 
 
     }

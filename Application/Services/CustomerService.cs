@@ -51,7 +51,7 @@ namespace Application.Services
         public async Task<ServiceResult> GetCustomers()
         {
             try
-            { 
+            {
                 var customer = _repo.TableNoTracking.ToList();
 
                 if (customer == null)
@@ -76,7 +76,7 @@ namespace Application.Services
 
                 Customer customer = _mapper.Map<Customer>(model);
 
-                bool checkPhoneNumber = PhoneNumberValidation.IsValidMobilePhoneNumber(model.PhoneNumber, model.CountryCode);
+                bool checkPhoneNumber = (bool)CheckPhone(model.PhoneNumber, model.CountryCode).Result.Data;
 
                 if (!checkPhoneNumber)
                     return BadRequest(ErrorCodeEnum.PhoneFormatError, Resource.MobileCheck, null);///
@@ -97,7 +97,7 @@ namespace Application.Services
             {
                 _logger.LogError(ex, null, null);
 
-                if(ex.Message.Equals(Resource.PhoneException))
+                if (ex.Message.Equals(Resource.PhoneException))
                     return BadRequest(ErrorCodeEnum.BadRequest, Resource.PhoneError, null);///
 
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
@@ -131,8 +131,8 @@ namespace Application.Services
         {
             try
             {
-                ValidateModel(model); 
-               
+                ValidateModel(model);
+
                 var customer = _repo.GetByIdAsync(cancellationToken, model.Id).Result;
 
                 if (customer == null)
@@ -143,7 +143,7 @@ namespace Application.Services
                 if (check.Data.Equals(true))
                     return BadRequest(ErrorCodeEnum.BadRequest, Resource.ConflictError, null);///
 
-                bool checkPhoneNumber = PhoneNumberValidation.IsValidMobilePhoneNumber(model.PhoneNumber, model.CountryCode);
+                bool checkPhoneNumber = (bool)CheckPhone(model.PhoneNumber, model.CountryCode).Result.Data;
 
                 // TODO : check unique fields and conditions  
                 customer.BankAccountNumber = model.BankAccountNumber;
@@ -186,10 +186,10 @@ namespace Application.Services
                 .Any(x => x.Firstname == firstName
                 && x.Lastname == lastName
                 && x.DateOfBirth == dateOfBirth);
-                 
+
                 var emailCheck = _repo.TableNoTracking
                     .Any(x => x.Email == email);
-               
+
                 if (conflict || emailCheck)
                     conflictRes = true;
 
@@ -202,6 +202,25 @@ namespace Application.Services
 
                 return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
             }
+        }
+
+        public async Task<ServiceResult> CheckPhone(string phoneNumber,string countryCode )
+        {
+            try
+            {
+               var res = PhoneNumberValidation.IsValidMobilePhoneNumber(phoneNumber, countryCode);
+
+                if(!res)
+                return Ok(false);
+
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, null, null);
+
+                return InternalServerError(ErrorCodeEnum.InternalError, Resource.GeneralErrorTryAgain, null);
+            } 
         }
     }
 }
