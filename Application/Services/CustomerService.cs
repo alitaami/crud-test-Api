@@ -27,6 +27,11 @@ namespace Application.Services
         {
             try
             {
+                if (id <= 0)
+                {
+                    return NotFound(ErrorCodeEnum.NotFound, Resource.NotFound, null);
+                }
+
                 var customer = await _repo.GetByIdAsync(cancellationToken, id);
 
                 if (customer == null)
@@ -46,7 +51,7 @@ namespace Application.Services
         public async Task<ServiceResult> GetCustomers()
         {
             try
-            {
+            { 
                 var customer = _repo.TableNoTracking.ToList();
 
                 if (customer == null)
