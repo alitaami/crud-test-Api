@@ -1,0 +1,32 @@
+Hello I have finished the task. I followed most of the conditions and rules that you told me,
+but unfortunately I didnt implement the Test section beacause I am little familiar with Testing.
+I am eager to start taking Testing courses and learn it as soon as it possible too and build testable projects.
+-------
+
+First you should add-migration and update-database to create a Db in your local SqlServer, 
+then it will seed some data to Customer table by fluent api.
+
+-------
+** You can test CRUD methods with swagger **
+
+These are Datas for test AddCustomer method with swagger :
+
+{
+  "firstname": "hossein",
+  "lastname": "eyvazi",
+  "dateOfBirth": "2000-09-18T08:50:08.813Z",
+  "countryCode": "IR",
+  "phoneNumber": "9301327635",
+  "email": "hossein91@gmail.com",
+  "bankAccountNumber": "5859831001081015"
+}
+
+{
+  "firstname": "Muslum",
+  "lastname": "Karacakaya",
+  "dateOfBirth": "1950-02-18T08:50:08.813Z",
+  "countryCode": "TR",
+  "phoneNumber": "5355455525",
+  "email": "MuslumK90@gmail.com",
+  "bankAccountNumber": "2929347589012345"
+}
