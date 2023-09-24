@@ -73,6 +73,8 @@ namespace Mc2.Crud.Tests
             //Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
             //Assert.That(result.Result, Is.EqualTo(ErrorCodeEnum.None));
+            Assert.That(result.Result.ErrorMessage, Is.Null);
+            Assert.That(result.Result.Errors, Is.Null);
             Assert.That(result.Data, Is.EqualTo(mockCustomerDto));
         }
 
@@ -86,7 +88,7 @@ namespace Mc2.Crud.Tests
 
             // Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
-            //Assert.That(result, Is.EqualTo(ErrorCodeEnum.NotFound)); // Check the expected result code
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.NotFound));
             Assert.That(result.Data, Is.Null);
         }
 
@@ -103,7 +105,8 @@ namespace Mc2.Crud.Tests
 
             //Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
-            //Assert.That(result.ResultCode, Is.EqualTo(ResultCodeEnum.InternalError));
+            //Assert.That(result.ResultCode, Is.EqualTo(ResultCodeEnum.InternalError)); 
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.InternalError));
             Assert.That(result.Data, Is.Null);
 
         }
@@ -159,7 +162,10 @@ namespace Mc2.Crud.Tests
 
             //Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Data, Is.EqualTo(mockCustomersDto));
             Assert.That(result.Data, Is.Not.Null);
+            Assert.That(result.Result.ErrorMessage, Is.Null);
+            Assert.That(result.Result.Errors, Is.Null);
         }
 
         [Test]
@@ -173,7 +179,8 @@ namespace Mc2.Crud.Tests
 
             //Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
-            Assert.That(result.Data, Is.Null);
+            Assert.That(result.Data, Is.Null);  
+
         }
 
         [Test]
@@ -188,7 +195,73 @@ namespace Mc2.Crud.Tests
 
             //Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.InternalError));
+
         }
         #endregion
+
+        #region DeleteById
+        [TestCase(1)]
+        public async Task DeleteCustomerById_WithValidId_Successful(int Id)
+        {
+            CancellationToken cancellationToken = CancellationToken.None;
+
+            //Arrange
+            Mock.Get(_repo)
+                .Setup(repo => repo.GetByIdAsync(cancellationToken, Id))
+                .ReturnsAsync(new Customer());
+
+            //Act
+            var result = await _service.DeleteCustomerById(Id, cancellationToken);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorMessage, Is.Null);
+            Assert.That(result.Result.Errors, Is.Null);
+
+        }
+
+        [TestCase(0)]
+        public async Task DeleteCustomerById_WithInValidId_NotSuccessful(int Id)
+        {
+            CancellationToken cancellationToken = CancellationToken.None;
+
+            //Arrange
+            Mock.Get(_repo)
+                .Setup(repo => repo.GetByIdAsync(cancellationToken, Id))
+                .ReturnsAsync((Customer)null);
+
+            //Act
+            var result = await _service.DeleteCustomerById(Id, cancellationToken);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Data, Is.Null);
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.NotFound));
+         
+        }
+
+        [TestCase(0)]
+        public async Task DeleteCustomerById_WithInValidId_InternalServerError(int Id)
+        {
+            CancellationToken cancellationToken = CancellationToken.None;
+
+            //Arrange
+            Mock.Get(_repo)
+                .Setup(repo => repo.GetByIdAsync(cancellationToken, Id))
+                .Throws(new Exception());
+
+            //Act
+            var result = await _service.DeleteCustomerById(Id, cancellationToken);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.InternalError));
+
+        }
+
+        #endregion
+
+
     }
 }
