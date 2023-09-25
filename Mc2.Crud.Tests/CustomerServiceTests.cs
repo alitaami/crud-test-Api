@@ -14,6 +14,10 @@ using System.Net;
 
 namespace Mc2.Crud.Tests
 {
+    /// <summary>
+    /// Tests for CustomerService main methods
+    /// </summary>
+    [TestFixture]
     public class CustomerServiceTests
     {
         private IRepository<Customer> _repo;
@@ -114,7 +118,6 @@ namespace Mc2.Crud.Tests
 
             //Assert
             Assert.That(result, Is.InstanceOf<ServiceResult>());
-            //Assert.That(result.ResultCode, Is.EqualTo(ResultCodeEnum.InternalError)); 
             Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.InternalError));
             Assert.That(result.Data, Is.Null);
 
@@ -280,7 +283,7 @@ namespace Mc2.Crud.Tests
         public async Task AddCustomer_ValidInput_Successful()
         {
             CancellationToken cancellationToken = CancellationToken.None;
-          
+
             // Arrange
             var model = new CustomerViewModel
             {
@@ -320,7 +323,7 @@ namespace Mc2.Crud.Tests
         public async Task AddCustomer_InvalidPhoneNumber_ReturnsBadRequest()
         {
             CancellationToken cancellationToken = CancellationToken.None;
-         
+
             // Arrange
             var model = new CustomerViewModel
             {
@@ -428,6 +431,207 @@ namespace Mc2.Crud.Tests
             Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.InternalError));
         }
 
+        #endregion
+
+        #region Update
+        [Test]
+        public async Task UpdateCustomer_ValidData_ReturnsOk()
+        {
+            //Arrange
+
+            var cancellationToken = CancellationToken.None;
+            var model = new CustomerUpdateViewModel
+            {
+                // Provide valid input data here
+                Id = 1,
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "9301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081431"
+            };
+            Customer customer = new Customer
+            {
+                Firstname = model.Firstname,
+                Lastname = model.Lastname,
+                DateOfBirth = model.DateOfBirth,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                BankAccountNumber = model.BankAccountNumber
+            };
+
+            Mock.Get(_repo)
+                .Setup(repo => repo.GetByIdAsync(cancellationToken, model.Id))
+                .ReturnsAsync(customer);
+
+            Mock.Get(_repo)
+                .Setup(repo => repo.UpdateAsync(customer, cancellationToken, true))
+                .Returns(Task.CompletedTask);
+
+            //Act
+            var result = await _service.UpdateCustomer(model, cancellationToken);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.None));
+
+        }
+
+        [Test]
+        public async Task UpdateCustomer_InValidId_ReturnsNotFound()
+        {
+            //Arrange 
+
+            CancellationToken cancellationToken = CancellationToken.None;
+
+            var model = new CustomerUpdateViewModel
+            {
+                // Provide valid input data here
+                Id = 0,
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "9301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081431"
+            };
+
+            Mock.Get(_repo)
+             .Setup(repo => repo.GetByIdAsync(cancellationToken, model.Id))
+             .ReturnsAsync((Customer)null);
+
+            //Act
+            var result = await _service.UpdateCustomer(model, cancellationToken);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Data, Is.Null);
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.NotFound));
+        }
+
+
+        [Test]
+        public async Task UpdateCustomer_InValidPhoneNumber_ReturnsBadRequest()
+        {
+            //Arrange
+
+            var cancellationToken = CancellationToken.None;
+            var model = new CustomerUpdateViewModel
+            {
+                // Provide valid input data here
+                Id = 1,
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081431"
+            };
+            Customer customer = new Customer
+            {
+                Firstname = model.Firstname,
+                Lastname = model.Lastname,
+                DateOfBirth = model.DateOfBirth,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                BankAccountNumber = model.BankAccountNumber
+            };
+
+            Mock.Get(_repo)
+                .Setup(repo => repo.GetByIdAsync(cancellationToken, model.Id))
+                .ReturnsAsync(customer);
+
+            Mock.Get(_repo)
+                .Setup(repo => repo.UpdateAsync(customer, cancellationToken, true))
+                .Returns(Task.FromCanceled<int>(new CancellationToken(canceled: true))); // Simulate an UnSuccessful Update
+
+            //Act
+            var result = await _service.UpdateCustomer(model, cancellationToken);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.PhoneFormatError));
+        }
+
+        [Test]
+        public async Task UpdateCustomer_Conflict_ReturnsBadRequest()
+        {
+            //Arrange
+
+            var cancellationToken = CancellationToken.None;
+            var model = new CustomerUpdateViewModel
+            {
+                // Provide valid input data here
+                Id = 1,
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081431"
+            };
+            Customer customer = new Customer
+            {
+                Firstname = model.Firstname,
+                Lastname = model.Lastname,
+                DateOfBirth = model.DateOfBirth,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                BankAccountNumber = model.BankAccountNumber
+            };
+
+
+            Mock.Get(_repo)
+                .Setup(repo => repo.GetByIdAsync(cancellationToken, model.Id))
+                .ReturnsAsync(customer);
+
+            // Mock the TableNoTracking  method of the repository to simulate a duplicate Update
+            Mock.Get(_repo)
+                .Setup(repo => repo.TableNoTracking)
+                .Returns(new[] { customer }.AsQueryable());
+            //Act
+            var result = await _service.UpdateCustomer(model, cancellationToken);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.UserAlreadyExists));
+        }
+
+        [Test]
+        public async Task UpdateCustomer_InternalError_ReturnsInternalServerError()
+        {
+            //Arrange
+
+            var cancellationToken = CancellationToken.None;
+            var model = new CustomerUpdateViewModel
+            {
+                // Provide valid input data here
+                Id = 1,
+                Firstname = "John",
+                Lastname = "Doe",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Email = "john@example.com",
+                PhoneNumber = "9301327634",
+                CountryCode = "IR",
+                BankAccountNumber = "58599831001081431"
+            };
+
+            Mock.Get(_repo)
+               .Setup(repo => repo.GetByIdAsync(cancellationToken, model.Id))
+               .Throws(new Exception());
+
+            //Act 
+            var result = await _service.UpdateCustomer(model, cancellationToken);
+
+            //Assert
+            Assert.That(result, Is.InstanceOf<ServiceResult>());
+            Assert.That(result.Result.ErrorCode, Is.EqualTo(ErrorCodeEnum.InternalError));
+        }
         #endregion
     }
 }

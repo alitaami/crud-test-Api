@@ -15,6 +15,9 @@ using Application.Exceptions;
 
 namespace Mc2.CrudTest.Presentation.Server.Controllers
 {
+    /// <summary>
+    /// Customer Controller
+    /// </summary>
     public class CustomerController : APIControllerBase
     {
         private readonly ILogger<CustomerController> _logger;
