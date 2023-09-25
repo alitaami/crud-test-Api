@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Insfrastr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurations", "Configuration\Configurations.csproj", "{E2C89E55-4DE4-4703-A054-C67BE377EF27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mc2.Crud.Tests", "Mc2.Crud.Tests\Mc2.Crud.Tests.csproj", "{402454F1-F378-4FF0-A6E8-1D4569699C01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mc2.Crud.Tests_TDD", "Mc2.Crud.Tests\Mc2.Crud.Tests_TDD.csproj", "{402454F1-F378-4FF0-A6E8-1D4569699C01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
