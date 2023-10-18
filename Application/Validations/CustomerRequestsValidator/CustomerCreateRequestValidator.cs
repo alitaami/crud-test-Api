@@ -14,8 +14,6 @@ namespace Application.Validations.CustomerRequestsValidator
         {
             RuleFor(x => x.CustomerRequest)
                 .SetValidator(new Validations.CustomerViewModelValidator.CustomerValidator());
-      
         }
-        
     }
 }
