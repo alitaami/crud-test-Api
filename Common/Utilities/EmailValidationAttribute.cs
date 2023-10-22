@@ -17,7 +17,7 @@ namespace Common.Utilities
         {
             if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
             {
-                return true; // Allow null or empty values (you can modify this behavior)
+                return false; // Disallow null or empty values (you can modify this behavior)
             }
 
             string email = value.ToString();
