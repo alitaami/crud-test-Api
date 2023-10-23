@@ -17,6 +17,22 @@ namespace Common.Utilities
                 throw new Exception(ex.Message);
             }
         }
+
+        public static bool IsValidMobilePhoneNumber(string phoneNumber)
+        {
+            try
+            {
+                var phoneNumberUtil = PhoneNumberUtil.GetInstance();
+                var phoneNumberParsed = phoneNumberUtil.Parse(phoneNumber, null);
+                var type1 = phoneNumberUtil.GetNumberType(phoneNumberParsed);
+                var type2 = phoneNumberUtil.IsValidNumber(phoneNumberParsed);
+                return type2 && type1 is PhoneNumberType.MOBILE or PhoneNumberType.FIXED_LINE_OR_MOBILE;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 
 }
